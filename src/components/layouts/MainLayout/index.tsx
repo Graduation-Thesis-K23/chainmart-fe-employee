@@ -1,12 +1,7 @@
 import React, { FC, ReactElement, memo } from "react";
 import { Layout, Menu } from "antd";
 import type { MenuProps } from "antd";
-import {
-  ShopOutlined,
-  AreaChartOutlined,
-  UsergroupAddOutlined,
-  CodepenOutlined,
-} from "@ant-design/icons";
+import { CodepenOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Header, HomeLink, Image } from "./styled";
 import logo from "~/assets/images/logo.png";

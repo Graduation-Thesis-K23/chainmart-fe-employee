@@ -1,15 +1,99 @@
-import { Col, Drawer, Row } from "antd";
+import { Button, Col, Drawer, Row } from "antd";
 import React, { FC, Fragment, memo } from "react";
 import { OrderDetailsProps } from ".";
 import Span from "./Span";
 import convertPrice from "~/utils/convert-price";
 import { ProductsLabel, ProductsTable, TBody, THead } from "./styled";
+import { OrderStatus } from "~/shared";
+import {
+  approveOrder,
+  beginShipOrder,
+  rejectOrder,
+  useAppDispatch,
+} from "~/redux";
+import { toast } from "react-toastify";
 
 const ViewOrder: FC<{
   order: OrderDetailsProps;
   viewOrder: boolean;
   handleViewOrder: (status: boolean) => void;
 }> = ({ order, viewOrder, handleViewOrder }) => {
+  const dispatch = useAppDispatch();
+
+  const handleApprove = async (id: string) => {
+    const result = await dispatch(approveOrder(id));
+
+    if (approveOrder.fulfilled.match(result)) {
+      handleViewOrder(false);
+      toast.success("Approve Order Successfully");
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    const result = await dispatch(rejectOrder(id));
+
+    if (rejectOrder.fulfilled.match(result)) {
+      handleViewOrder(false);
+      toast.success("Reject Order Successfully");
+    }
+  };
+
+  const handleBeginShipping = async (id: string) => {
+    const result = await dispatch(beginShipOrder(id));
+
+    if (beginShipOrder.fulfilled.match(result)) {
+      handleViewOrder(false);
+      toast.success("Begin Shipping Successfully");
+    }
+  };
+
+  const controlRender = (status: string) => {
+    switch (status) {
+      case OrderStatus.Processing:
+        return (
+          <div
+            style={{
+              marginTop: 10,
+            }}
+          >
+            <Button
+              type="primary"
+              style={{
+                marginRight: 10,
+              }}
+              onClick={() => handleApprove(order.id)}
+            >
+              Approve
+            </Button>
+            <Button onClick={() => handleReject(order.id)}>Reject</Button>
+          </div>
+        );
+      case OrderStatus.Approved:
+        return (
+          <div
+            style={{
+              marginTop: 10,
+            }}
+          >
+            <Button
+              type="primary"
+              style={{
+                marginRight: 10,
+              }}
+              onClick={() => handleBeginShipping(order.id)}
+            >
+              Begin Shipping
+            </Button>
+            <Button onClick={() => handleReject(order.id)}>
+              Product Not Available
+            </Button>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Drawer
       title="View Order Details"
@@ -110,6 +194,7 @@ const ViewOrder: FC<{
           </ProductsTable>
         </Col>
       </Row>
+      {controlRender(order.status)}
     </Drawer>
   );
 };
