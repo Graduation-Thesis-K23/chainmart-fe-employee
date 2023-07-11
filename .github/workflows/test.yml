@@ -15,9 +15,8 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          install-command: npm install -g serve
+          install-command: npm install -g serve && npm install
           browser: chrome
-          start: npm run start
           build: npm run build
           wait-on: "http://localhost:8080"
           wait-on-timeout: 120
