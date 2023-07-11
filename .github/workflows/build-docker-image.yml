@@ -111,7 +111,7 @@ jobs:
           format: markdown
           message: |
 
-            *Cypress tests passed!*
+            *Build Docker Image success!*
 
             *Branch:* ${{ github.ref }}
             *Workflow:* ${{ github.workflow }}
