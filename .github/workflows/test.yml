@@ -17,6 +17,7 @@ jobs:
         with:
           build: npm run build
           start: npm run start
+          browser: chrome
           wait-on: "http://localhost:8080"
           wait-on-timeout: 120
 
