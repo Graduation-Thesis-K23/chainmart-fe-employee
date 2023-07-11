@@ -15,11 +15,12 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
+          install-command: npm install -g serve
           browser: chrome
           start: npm run start
           build: npm run build
-          config: baseUrl=http://localhost:8080
-          headed: true
+          wait-on: "http://localhost:8080"
+          wait-on-timeout: 120
 
       - name: Upload Cypress videos
         uses: actions/upload-artifact@v3

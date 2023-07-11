@@ -7,5 +7,6 @@ export default defineConfig({
     },
     video: true,
     videoCompression: 32,
+    baseUrl: "http://localhost:8080",
   },
 });
