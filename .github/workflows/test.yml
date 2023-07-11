@@ -16,6 +16,10 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           browser: chrome
+          start: npm run start
+          build: npm run build
+          config: baseUrl=http://localhost:8080
+          headed: true
 
       - name: Upload Cypress videos
         uses: actions/upload-artifact@v3
