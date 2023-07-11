@@ -42,7 +42,9 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
-          start: npm start
+          # install serve and start the server in the background
+          install: npm install serve --global
+          start: npm start -- --port 8080
           browser: chrome
           parallel: true
           record: true
