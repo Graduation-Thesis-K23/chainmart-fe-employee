@@ -52,3 +52,20 @@ jobs:
             *Commit message:* ${{ github.event.head_commit.message }}
             *Commit url:* ${{ github.event.head_commit.url }}
             *Commit author:* ${{ github.event.head_commit.author.name }}
+
+      - name: Send mesage to Telegram
+        if: steps.cypress-run.outcome == 'success'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            *Cypress tests passed!*
+            *Branch:* ${{ github.ref }}
+            *Workflow:* ${{ github.workflow }}
+            *Run number:* ${{ github.run_number }}
+            *Run id:* ${{ github.run_id }}
+            *Commit message:* ${{ github.event.head_commit.message }}
+            *Commit url:* ${{ github.event.head_commit.url }}
+            *Commit author:* ${{ github.event.head_commit.author.name }}
