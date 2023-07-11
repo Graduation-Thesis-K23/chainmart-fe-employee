@@ -17,7 +17,6 @@ jobs:
         with:
           browser: chrome
           parallel: true
-          record: true
 
       - name: Upload Cypress videos
         uses: actions/upload-artifact@v3
