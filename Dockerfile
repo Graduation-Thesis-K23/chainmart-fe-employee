@@ -2,7 +2,7 @@ FROM node:18-alpine as deps
 WORKDIR /app
 
 COPY package.json yarn.lock* ./
-RUN yarn --frozen-lockfile
+RUN npm install --silent
 
 FROM node:18-alpine as build
 WORKDIR /app
