@@ -1,12 +1,6 @@
 name: Cypress Tests
 
-on:
-  push:
-    branches:
-      - develop, production
-  pull_request:
-    branches:
-      - develop, production
+on: [push, pull_request]
 
 jobs:
   cypress-run:
@@ -44,7 +38,9 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
+
             *Cypress tests failed!*
+
             *Branch:* ${{ github.ref }}
             *Workflow:* ${{ github.workflow }}
             *Run number:* ${{ github.run_number }}
@@ -61,7 +57,9 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
+
             *Cypress tests passed!*
+
             *Branch:* ${{ github.ref }}
             *Workflow:* ${{ github.workflow }}
             *Run number:* ${{ github.run_number }}
