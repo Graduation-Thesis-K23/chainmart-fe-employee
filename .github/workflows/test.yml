@@ -22,7 +22,7 @@ jobs:
         with:
           name: build
           if-no-files-found: error
-          path: dist
+          path: build
 
   cypress-tests:
     needs: build-app
