@@ -6,6 +6,7 @@ const instance = axios.create({
       ? "http://localhost:3000"
       : process.env.REACT_APP_BACKEND_URL,
   withCredentials: true,
+  timeout: 3000,
 });
 
 instance.interceptors.request.use(
