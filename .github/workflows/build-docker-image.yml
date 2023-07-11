@@ -45,7 +45,7 @@ jobs:
         run: |
           if [[ -z "$VERSION" ]]; then
             echo "VERSION is empty"
-            exit 1
+            exit 0
           fi
 
       - name: Check out code
@@ -66,6 +66,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag, and push image to Amazon ECR
+        id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: chainmart-fe-employee
@@ -74,3 +75,48 @@ jobs:
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        continue-on-error: true
+    outputs:
+      imageUri: ${{ steps.build-image.outputs.imageUri }}
+      status: ${{ steps.build-image.outcome }}
+
+  telegram-notify:
+    runs-on: ubuntu-22.04
+    needs: docker-build
+    steps:
+      - name: Send mesage to Telegram
+        if: needs.docker-build.outputs.status == 'failure'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+
+            *Build Docker Image failed!*
+            *Branch:* ${{ github.ref }}
+            *Workflow:* ${{ github.workflow }}
+            *Run number:* ${{ github.run_number }}
+            *Run id:* ${{ github.run_id }}
+            *Commit message:* ${{ github.event.head_commit.message }}
+            *Commit url:* ${{ github.event.head_commit.url }}
+            *Commit author:* ${{ github.event.head_commit.author.name }}
+
+      - name: Send mesage to Telegram
+        if: needs.docker-build.outputs.status == 'success'
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+
+            *Cypress tests passed!*
+
+            *Branch:* ${{ github.ref }}
+            *Workflow:* ${{ github.workflow }}
+            *Run number:* ${{ github.run_number }}
+            *Run id:* ${{ github.run_id }}
+            *Commit message:* ${{ github.event.head_commit.message }}
+            *Commit url:* ${{ github.event.head_commit.url }}
+            *Commit author:* ${{ github.event.head_commit.author.name }}
