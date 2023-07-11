@@ -43,12 +43,11 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           install-command: npm install serve --global
-          start: npm start -- --port 8080
+          start: npm start
           browser: chrome
           parallel: true
           record: true
           wait-on: "http://localhost:8080"
-          build: npm run build
 
       - name: Upload Cypress videos
         uses: actions/upload-artifact@v3
