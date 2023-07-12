@@ -1,0 +1,34 @@
+name: Update Version and Build Docker Image
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  git-tag:
+    runs-on: ubuntu-22.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      version: ${{ steps.export.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v3
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        with:
+          branch: develop
+          extra_plugins: |
+            @semantic-release/changelog@6.0.0
+            @semantic-release/git
+
+      - name: Export Git Tag
+        id: export
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: echo "version=${{ steps.semantic.outputs.new_release_version }}" >> "$GITHUB_OUTPUT"

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chainmart
+  labels:
+    app: chainmart-devops
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chainmart-devops
+  template:
+    metadata:
+      labels:
+        app: chainmart-devops
+    spec:
+      containers:
+        - name: chainmart-fe-employee
+          image: 376597958889.dkr.ecr.ap-southeast-1.amazonaws.com/chainmart-fe-employee:latest
+          ports:
+            - containerPort: 80
+        - name: chainmart-fe-customer
+          image: 376597958889.dkr.ecr.ap-southeast-1.amazonaws.com/chainmart-fe-employee:latest
+          ports:
+            - containerPort: 80
