@@ -1,0 +1,8 @@
+version: "3.7"
+
+services:
+  chainmart-fe-employee:
+    image: 376597958889.dkr.ecr.ap-southeast-1.amazonaws.com/chainmart-fe-employee:latest
+    ports:
+      - "6000:80"
+    restart: always
