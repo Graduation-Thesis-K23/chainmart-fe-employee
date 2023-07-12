@@ -1,5 +1,18 @@
-# Packages
+`https://employee.chainmart.site` 6000
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square&logo=prettier)](https://github.com/prettier/prettier) [![semantic-release: nextjs](https://img.shields.io/badge/semantic--release-nextjs-e10079?style=flat-square&logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+`
+server {
 
-- Customer Production: `https://branch.chainmart.site` 8001
+    listen 80;
+    server_name employee.chainmart.site;
+
+    location / {
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Host $http_host;
+      proxy_pass http://localhost:6000;
+      proxy_redirect off;
+    }
+
+}
+`
