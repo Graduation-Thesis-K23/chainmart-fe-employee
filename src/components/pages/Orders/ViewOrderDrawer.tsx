@@ -110,15 +110,18 @@ const ViewOrder: FC<{
         <Col span={5}>
           <Span
             label="Estimated Shipped Date"
-            value={order.estimated_shipped_date.toString()}
+            value={
+              order.estimated_shipped_date
+                ? order.estimated_shipped_date.toString()
+                : "N/A"
+            }
           />
-        </Col>
-
-        <Col span={5}>
-          <Span label="Total" value={convertPrice(order.total)} />
         </Col>
         <Col span={5}>
           <Span label="Status" value={order.status} />
+        </Col>
+        <Col span={5}>
+          <Span label="Total" value={order.total} />
         </Col>
         <Col span={4}>
           <Span label="Payment" value={order.payment} />
@@ -180,12 +183,12 @@ const ViewOrder: FC<{
               </tr>
             </THead>
             <TBody>
-              {order.order_details.map((orderDetail, index) => (
+              {order.products.map((orderDetail, index) => (
                 <Fragment key={index}>
                   <tr>
                     <td>{index + 1}</td>
-                    <td>{orderDetail.product.name}</td>
-                    <td>{convertPrice(orderDetail.product.price)}</td>
+                    <td>{orderDetail.name}</td>
+                    <td>{convertPrice(orderDetail.price)}</td>
                     <td>{orderDetail.quantity}</td>
                   </tr>
                 </Fragment>

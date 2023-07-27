@@ -14,7 +14,6 @@ import PageTitle from "~/components/common/PageTitle";
 import { OrderStatus, Payment } from "~/shared";
 import ReloadButton from "~/components/common/ReloadButton";
 import ViewOrderDrawer from "./ViewOrderDrawer";
-import convertPrice from "~/utils/convert-price";
 
 export interface ProductProps {
   name: string;
@@ -25,7 +24,10 @@ export interface ProductProps {
 
 interface OrderDetailProps {
   quantity: number;
-  product: ProductProps;
+  name: string;
+  price: number;
+  sale: number;
+  slug: string;
 }
 
 interface AddressProps {
@@ -46,16 +48,16 @@ export interface OrderDetailsProps {
     username: string;
     email: string;
   };
-  order_details: OrderDetailProps[];
+  products: OrderDetailProps[];
   address: AddressProps;
   total: number;
   status: OrderStatus;
   payment: Payment;
-  return_date: Date;
-  approved_date: Date;
-  shipped_date: Date;
-  estimated_shipped_date: Date;
-  canceled_date: Date;
+  return_date?: Date;
+  approved_date?: Date;
+  shipped_date?: Date;
+  estimated_shipped_date?: Date;
+  canceled_date?: Date;
 }
 
 const OrdersManagement = () => {
@@ -88,16 +90,12 @@ const OrdersManagement = () => {
       render: (user) => <span>{user.phone}</span>,
     },
     {
-      title: "Total",
-      render: (user) => <span>{convertPrice(user.total)}</span>,
-      sorter: (a, b) => (a.total > b.total ? 1 : -1),
-    },
-    {
       title: "Status",
       dataIndex: "status",
       sorter: (a, b) => (a.status > b.status ? 1 : -1),
     },
   ];
+
   useEffect(() => {
     dispatch(fetchOrder());
   }, []);
