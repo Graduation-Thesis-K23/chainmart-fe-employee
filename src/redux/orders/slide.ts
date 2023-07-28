@@ -21,12 +21,19 @@ interface User {
 export interface OrdersRender extends OrdersType {
   created_at: Date;
   user: User;
-  estimated_shipped_date: Date;
   approved_date: Date;
+  approved_by: string;
+  packaged_date: Date;
+  packaged_by: string;
+  started_date: Date;
+  started_by: string;
+  completed_date: Date;
+  completed_by: string;
   cancelled_date: Date;
-  shipping_date: Date;
+  cancelled_by: string;
+  returned_date: Date;
+  returned_by: string;
   status: OrderStatus;
-  total: number;
   payment: string;
   address: {
     id: string;
@@ -37,7 +44,7 @@ export interface OrdersRender extends OrdersType {
     city: string;
     ward: string;
   };
-  products: {
+  order_details: {
     id: string;
     name: string;
     price: number;
@@ -46,39 +53,6 @@ export interface OrdersRender extends OrdersType {
     image: string;
   }[];
 }
-
-/* id: "5",
-      create_at: Date.now(),
-      address: {
-        id: "1",
-        name: "Nguyễn Văn A",
-        phone: "0123456789",
-        street: "123 Đường ABC",
-        district: "Quận XYZ",
-        city: "TP. HCM",
-        ward: "Phường 123",
-      },
-      cancelled_date: Date.now(),
-      status: OrderStatus.Cancelled,
-      payment: Payment.Cash,
-      products: [
-        {
-          id: "1",
-          name: "Áo thun nam",
-          price: 100000,
-          sale: 0,
-          quantity: 1,
-          image: "2ba48c4c",
-        },
-        {
-          id: "2",
-          name: "Áo thun nam 1",
-          price: 1000000,
-          sale: 2,
-          quantity: 2,
-          image: "2ba48c4c",
-        },
-      ], */
 
 export interface OrdersState {
   data: OrdersRender[];
@@ -142,12 +116,12 @@ export const ordersState = createSlice({
       state.status = ASYNC_STATUS.LOADING;
     });
     builder.addCase(beginShipOrder.fulfilled, (state, { payload }) => {
-      const { id, status, shipping_date } = payload;
+      const { id, status, started_date } = payload;
       state.status = ASYNC_STATUS.SUCCEED;
       state.data = state.data.map((order) => {
         if (order.id === id) {
           order.status = status;
-          order.shipping_date = shipping_date;
+          order.started_date = started_date;
         }
         return order;
       });
