@@ -12,6 +12,7 @@ import {
   useAppDispatch,
 } from "~/redux";
 import { toast } from "react-toastify";
+import convertTimestamp from "~/utils/convert-timestamp";
 
 const ViewOrder: FC<{
   order: OrderDetailsProps;
@@ -49,7 +50,7 @@ const ViewOrder: FC<{
 
   const controlRender = (status: string) => {
     switch (status) {
-      case OrderStatus.Processing:
+      case OrderStatus.C:
         return (
           <div
             style={{
@@ -106,17 +107,6 @@ const ViewOrder: FC<{
         <Col span={5}>
           <Span label="Order ID" value={order.id} />
         </Col>
-
-        <Col span={5}>
-          <Span
-            label="Estimated Shipped Date"
-            value={
-              order.estimated_shipped_date
-                ? order.estimated_shipped_date.toString()
-                : "N/A"
-            }
-          />
-        </Col>
         <Col span={5}>
           <Span label="Status" value={order.status} />
         </Col>
@@ -129,7 +119,7 @@ const ViewOrder: FC<{
       </Row>
       <Row gutter={24}>
         <Col span={5}>
-          <Span label="Create At" value={order.created_at.toString()} />
+          <Span label="Create At" value={convertTimestamp(order.created_at)} />
         </Col>
         <Col span={5}>
           <Span
@@ -183,7 +173,7 @@ const ViewOrder: FC<{
               </tr>
             </THead>
             <TBody>
-              {order.products.map((orderDetail, index) => (
+              {order.order_details.map((orderDetail, index) => (
                 <Fragment key={index}>
                   <tr>
                     <td>{index + 1}</td>

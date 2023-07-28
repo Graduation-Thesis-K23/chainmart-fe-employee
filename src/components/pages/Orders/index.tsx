@@ -14,6 +14,7 @@ import PageTitle from "~/components/common/PageTitle";
 import { OrderStatus, Payment } from "~/shared";
 import ReloadButton from "~/components/common/ReloadButton";
 import ViewOrderDrawer from "./ViewOrderDrawer";
+import convertTimestamp from "~/utils/convert-timestamp";
 
 export interface ProductProps {
   name: string;
@@ -42,22 +43,16 @@ interface AddressProps {
 export interface OrderDetailsProps {
   id: string;
   created_at: Date;
-  user: {
-    name: string;
-    phone: string;
-    username: string;
-    email: string;
-  };
-  products: OrderDetailProps[];
+  order_details: OrderDetailProps[];
   address: AddressProps;
   total: number;
   status: OrderStatus;
   payment: Payment;
-  return_date?: Date;
   approved_date?: Date;
+  packaged_date?: Date;
   shipped_date?: Date;
-  estimated_shipped_date?: Date;
   canceled_date?: Date;
+  return_date?: Date;
 }
 
 const OrdersManagement = () => {
@@ -78,16 +73,22 @@ const OrdersManagement = () => {
     {
       title: "Create At",
       dataIndex: "created_at",
+      render: (created_at) => <span>{convertTimestamp(created_at)}</span>,
     },
     {
       title: "Name",
-      dataIndex: "user",
-      render: (user) => <span>{user.name}</span>,
+      dataIndex: "address",
+      render: (address) => <span>{address.name}</span>,
     },
     {
       title: "Phone",
+      dataIndex: "address",
+      render: (address) => <span>{address.phone}</span>,
+    },
+    {
+      title: "Username",
       dataIndex: "user",
-      render: (user) => <span>{user.phone}</span>,
+      render: (user) => <span>{user.username}</span>,
     },
     {
       title: "Status",
