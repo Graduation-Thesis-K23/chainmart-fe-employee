@@ -50,7 +50,7 @@ const ViewOrder: FC<{
 
   const controlRender = (status: string) => {
     switch (status) {
-      case OrderStatus.C:
+      case OrderStatus.Created:
         return (
           <div
             style={{
