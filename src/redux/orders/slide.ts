@@ -160,9 +160,20 @@ export const ordersState = createSlice({
 
 export const fetchOrder = createAsyncThunk(
   "orders/fetchOrder",
-  async (_, thunkApi) => {
+  async (
+    payload: {
+      status: OrderStatus | "all";
+      search: string;
+    },
+    thunkApi
+  ) => {
+    const params = new URLSearchParams({
+      status: payload.status,
+      search: payload.search,
+    }).toString();
+
     const response: OrdersRender[] | ErrorPayload = await instance.get(
-      "/api/orders/employee"
+      "/api/orders/employee?" + params
     );
 
     if ("message" in response) {

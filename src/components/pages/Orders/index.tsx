@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Button, Input, Select, Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { Orders, OrdersHeader } from "./styled";
 import {
@@ -15,6 +15,7 @@ import { OrderStatus, Payment } from "~/shared";
 import ReloadButton from "~/components/common/ReloadButton";
 import ViewOrderDrawer from "./ViewOrderDrawer";
 import convertTimestamp from "~/utils/convert-timestamp";
+import { SearchOutlined } from "@ant-design/icons";
 
 export interface ProductProps {
   name: string;
@@ -45,14 +46,25 @@ export interface OrderDetailsProps {
   created_at: Date;
   order_details: OrderDetailProps[];
   address: AddressProps;
-  total: number;
   status: OrderStatus;
   payment: Payment;
   approved_date?: Date;
   packaged_date?: Date;
+  started_date?: Date;
   shipped_date?: Date;
-  canceled_date?: Date;
-  return_date?: Date;
+  completed_date?: Date;
+  cancelled_date?: Date;
+  returned_date?: Date;
+  approved_by?: string;
+  packaged_by?: string;
+  started_by?: string;
+  shipped_by?: string;
+  cancelled_by?: string;
+  returned_by?: string;
+  completed_by?: string;
+  user: {
+    username: string;
+  };
 }
 
 const OrdersManagement = () => {
@@ -60,6 +72,9 @@ const OrdersManagement = () => {
   const [viewOrder, setViewOrder] = useState<OrderDetailsProps>(
     {} as OrderDetailsProps
   );
+
+  const [searchText, setSearchText] = useState<string>("");
+  const [status, setStatus] = useState<OrderStatus | "all">("all");
 
   const orders = useAppSelector((state) => state.orders);
   const dispatch = useAppDispatch();
@@ -97,8 +112,24 @@ const OrdersManagement = () => {
     },
   ];
 
+  const handleSearch = () => {
+    console.log(searchText, status);
+
+    dispatch(
+      fetchOrder({
+        search: searchText,
+        status,
+      })
+    );
+  };
+
   useEffect(() => {
-    dispatch(fetchOrder());
+    dispatch(
+      fetchOrder({
+        search: searchText,
+        status,
+      })
+    );
   }, []);
 
   return (
@@ -106,6 +137,42 @@ const OrdersManagement = () => {
       <OrdersHeader>
         <PageTitle text="Orders Management" />
       </OrdersHeader>
+      <Space
+        style={{
+          marginBottom: 16,
+        }}
+      >
+        <Input
+          placeholder="Name or Phone"
+          style={{
+            width: 700,
+          }}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+        <Select
+          defaultValue="all"
+          style={{ width: 120 }}
+          onChange={(value) => setStatus(value as OrderStatus | "all")}
+          options={[
+            { value: "all", label: "All" },
+            { value: OrderStatus.Created, label: "Created" },
+            { value: OrderStatus.Approved, label: "Approved" },
+            { value: OrderStatus.Packaged, label: "Packaged" },
+            { value: OrderStatus.Started, label: "Started" },
+            { value: OrderStatus.Completed, label: "Completed" },
+            { value: OrderStatus.Cancelled, label: "Cancelled" },
+            { value: OrderStatus.Returned, label: "Returned" },
+          ]}
+        />
+        <Button
+          type="primary"
+          loading={!(orders.status == ASYNC_STATUS.SUCCEED)}
+          icon={<SearchOutlined />}
+          onClick={handleSearch}
+        >
+          Search
+        </Button>
+      </Space>
       <Table
         columns={columns}
         dataSource={orders.data}

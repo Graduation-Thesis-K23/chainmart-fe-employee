@@ -1,5 +1,5 @@
-import { Button, Col, Drawer, Row } from "antd";
-import React, { FC, Fragment, memo } from "react";
+import { Button, Col, Drawer, Popconfirm, Row } from "antd";
+import React, { FC, Fragment, memo, useMemo } from "react";
 import { OrderDetailsProps } from ".";
 import Span from "./Span";
 import convertPrice from "~/utils/convert-price";
@@ -48,6 +48,13 @@ const ViewOrder: FC<{
     }
   };
 
+  const total = useMemo(() => {
+    return order.order_details?.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+  }, [order.order_details]);
+
   const controlRender = (status: string) => {
     switch (status) {
       case OrderStatus.Created:
@@ -66,7 +73,15 @@ const ViewOrder: FC<{
             >
               Approve
             </Button>
-            <Button onClick={() => handleReject(order.id)}>Reject</Button>
+            <Popconfirm
+              title="You must call the customer to confirm the order is not available. Are you sure?"
+              onConfirm={() => handleReject(order.id)}
+              okText="Yes"
+              cancelText="No"
+              placement="bottomRight"
+            >
+              <Button>Reject</Button>
+            </Popconfirm>
           </div>
         );
       case OrderStatus.Approved:
@@ -76,18 +91,32 @@ const ViewOrder: FC<{
               marginTop: 10,
             }}
           >
-            <Button
-              type="primary"
-              style={{
-                marginRight: 10,
-              }}
-              onClick={() => handleBeginShipping(order.id)}
+            <Popconfirm
+              title="Are you sure?"
+              onConfirm={() => handleBeginShipping(order.id)}
+              okText="Yes"
+              cancelText="No"
+              placement="bottomRight"
             >
-              Begin Shipping
-            </Button>
-            <Button onClick={() => handleReject(order.id)}>
-              Product Not Available
-            </Button>
+              <Button
+                type="primary"
+                style={{
+                  marginRight: 10,
+                }}
+              >
+                Packaged Order and Start Shipping
+              </Button>
+            </Popconfirm>
+
+            <Popconfirm
+              title="You must call the customer to confirm the order is not available. Are you sure?"
+              onConfirm={() => handleReject(order.id)}
+              okText="Yes"
+              cancelText="No"
+              placement="bottomRight"
+            >
+              <Button>Product Not Available</Button>
+            </Popconfirm>
           </div>
         );
       default:
@@ -101,48 +130,120 @@ const ViewOrder: FC<{
       placement="right"
       open={viewOrder}
       onClose={() => handleViewOrder(false)}
-      width={1200}
+      width={1400}
     >
       <Row gutter={24}>
-        <Col span={5}>
+        <Col span={8}>
           <Span label="Order ID" value={order.id} />
         </Col>
-        <Col span={5}>
+        <Col span={4}>
+          <Span label="Created At" value={convertTimestamp(order.created_at)} />
+        </Col>
+        <Col span={4}>
           <Span label="Status" value={order.status} />
         </Col>
-        <Col span={5}>
-          <Span label="Total" value={order.total} />
+        <Col span={4}>
+          <Span label="Total" value={convertPrice(total)} />
         </Col>
         <Col span={4}>
           <Span label="Payment" value={order.payment} />
         </Col>
       </Row>
       <Row gutter={24}>
-        <Col span={5}>
-          <Span label="Create At" value={convertTimestamp(order.created_at)} />
-        </Col>
-        <Col span={5}>
+        <Col span={4}>
           <Span
             label="Approved Date"
-            value={order.approved_date ? order.approved_date.toString() : "N/A"}
-          />
-        </Col>
-        <Col span={5}>
-          <Span
-            label="Shipped Date"
-            value={order.shipped_date ? order.shipped_date.toString() : "N/A"}
-          />
-        </Col>
-        <Col span={5}>
-          <Span
-            label="Canceled Date"
-            value={order.canceled_date ? order.canceled_date.toString() : "N/A"}
+            value={
+              order.approved_date
+                ? convertTimestamp(order.approved_date)
+                : "N/A"
+            }
           />
         </Col>
         <Col span={4}>
           <Span
-            label="Return Date"
-            value={order.return_date ? order.return_date.toString() : "N/A"}
+            label="Packaged Date"
+            value={
+              order.packaged_date
+                ? convertTimestamp(order.packaged_date)
+                : "N/A"
+            }
+          />
+        </Col>
+        <Col span={4}>
+          <Span
+            label="Started Shipment Date"
+            value={
+              order.started_date ? convertTimestamp(order.started_date) : "N/A"
+            }
+          />
+        </Col>
+        <Col span={4}>
+          <Span
+            label="Completed Shipment Date"
+            value={
+              order.completed_date
+                ? convertTimestamp(order.completed_date)
+                : "N/A"
+            }
+          />
+        </Col>
+        <Col span={4}>
+          <Span
+            label="Cancelled Date"
+            value={
+              order.cancelled_date
+                ? convertTimestamp(order.cancelled_date)
+                : "N/A"
+            }
+          />
+        </Col>
+        <Col span={4}>
+          <Span
+            label="Returned Date"
+            value={
+              order.returned_date
+                ? convertTimestamp(order.returned_date)
+                : "N/A"
+            }
+          />
+        </Col>
+      </Row>
+      <Row gutter={24}>
+        <Col span={4}>
+          <Span
+            label="Approved By"
+            value={order.approved_by ? order.approved_by : "N/A"}
+          />
+        </Col>
+        <Col span={4}>
+          <Span
+            label="Packaged By"
+            value={order.packaged_by ? order.packaged_by : "N/A"}
+          />
+        </Col>
+        <Col span={4}>
+          <Span
+            label="Started Shipment By"
+            value={order.started_by ? order.started_by : "N/A"}
+          />
+        </Col>
+        <Col span={4}>
+          <Span
+            label="Completed Shipment By"
+            value={order.completed_by ? order.completed_by : "N/A"}
+          />
+        </Col>
+        <Col span={4}>
+          <Span
+            label="Cancelled By"
+            value={order.cancelled_by ? order.cancelled_by : "N/A"}
+          />
+        </Col>
+        <Col span={4}>
+          <Span
+            label="Returned By"
+            value={order.returned_by ? order.returned_by : "N/A"}
           />
         </Col>
       </Row>
