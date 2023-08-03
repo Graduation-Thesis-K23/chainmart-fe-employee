@@ -50,7 +50,7 @@ const ViewOrder: FC<{
 
   const total = useMemo(() => {
     return order.order_details?.reduce(
-      (total, item) => total + item.price * item.quantity,
+      (total, item) => total + item.product.price * item.quantity,
       0
     );
   }, [order.order_details]);
@@ -278,8 +278,8 @@ const ViewOrder: FC<{
                 <Fragment key={index}>
                   <tr>
                     <td>{index + 1}</td>
-                    <td>{orderDetail.name}</td>
-                    <td>{convertPrice(orderDetail.price)}</td>
+                    <td>{orderDetail.product.name}</td>
+                    <td>{convertPrice(orderDetail.product.price)}</td>
                     <td>{orderDetail.quantity}</td>
                   </tr>
                 </Fragment>

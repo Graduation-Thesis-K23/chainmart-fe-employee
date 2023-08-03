@@ -26,10 +26,15 @@ export interface ProductProps {
 
 interface OrderDetailProps {
   quantity: number;
-  name: string;
-  price: number;
-  sale: number;
-  slug: string;
+  order_id: string;
+  product_id: string;
+  product: {
+    name: string;
+    price: number;
+    sale: number;
+    slug: string;
+    id: string;
+  };
 }
 
 interface AddressProps {
@@ -62,9 +67,7 @@ export interface OrderDetailsProps {
   cancelled_by?: string;
   returned_by?: string;
   completed_by?: string;
-  user: {
-    username: string;
-  };
+  user_id: string;
 }
 
 const OrdersManagement = () => {
@@ -101,9 +104,8 @@ const OrdersManagement = () => {
       render: (address) => <span>{address.phone}</span>,
     },
     {
-      title: "Username",
-      dataIndex: "user",
-      render: (user) => <span>{user.username}</span>,
+      title: "Payment",
+      dataIndex: "payment",
     },
     {
       title: "Status",
