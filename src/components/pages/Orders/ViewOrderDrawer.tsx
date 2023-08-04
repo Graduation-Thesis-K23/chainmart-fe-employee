@@ -1,5 +1,5 @@
 import { Button, Col, Drawer, Popconfirm, Row } from "antd";
-import React, { FC, Fragment, memo, useMemo } from "react";
+import React, { FC, Fragment, memo, useEffect, useMemo, useState } from "react";
 import { OrderDetailsProps } from ".";
 import Span from "./Span";
 import convertPrice from "~/utils/convert-price";
@@ -13,6 +13,12 @@ import {
 } from "~/redux";
 import { toast } from "react-toastify";
 import convertTimestamp from "~/utils/convert-timestamp";
+import instance from "~/services/axios-instance";
+
+interface AvailableProduct {
+  product_id: string;
+  available: number;
+}
 
 const ViewOrder: FC<{
   order: OrderDetailsProps;
@@ -20,6 +26,9 @@ const ViewOrder: FC<{
   handleViewOrder: (status: boolean) => void;
 }> = ({ order, viewOrder, handleViewOrder }) => {
   const dispatch = useAppDispatch();
+  const [availableProducts, setAvailableProducts] = useState<
+    AvailableProduct[]
+  >([]);
 
   const handleApprove = async (id: string) => {
     const result = await dispatch(approveOrder(id));
@@ -123,6 +132,37 @@ const ViewOrder: FC<{
         return null;
     }
   };
+
+  const orderDetails = useMemo(() => {
+    return order.order_details?.map((item) => {
+      const availableProduct = availableProducts.find(
+        (product) => product.product_id === item.product.id
+      );
+
+      return {
+        ...item,
+        available: availableProduct?.available || 0,
+      };
+    });
+  }, []);
+
+  useEffect(() => {
+    const ids = order.order_details?.map((item) => item.product.id);
+
+    const params = new URLSearchParams({
+      ids: ids?.join(",") || "",
+    });
+
+    const fetchAvailableProducts = async () => {
+      const result: AvailableProduct[] = await instance.get(
+        "/api/batches/available?" + params.toString()
+      );
+
+      setAvailableProducts(result);
+    };
+
+    fetchAvailableProducts();
+  }, []);
 
   return (
     <Drawer
@@ -271,16 +311,25 @@ const ViewOrder: FC<{
                 <th>Product</th>
                 <th>Price</th>
                 <th>Quantity</th>
+                <th>Available</th>
               </tr>
             </THead>
             <TBody>
-              {order.order_details.map((orderDetail, index) => (
+              {orderDetails.map((orderDetail, index) => (
                 <Fragment key={index}>
-                  <tr>
+                  <tr
+                    style={{
+                      backgroundColor:
+                        orderDetail.available < orderDetail.quantity
+                          ? "#f05e61"
+                          : "",
+                    }}
+                  >
                     <td>{index + 1}</td>
                     <td>{orderDetail.product.name}</td>
                     <td>{convertPrice(orderDetail.product.price)}</td>
                     <td>{orderDetail.quantity}</td>
+                    <td>{orderDetail.available}</td>
                   </tr>
                 </Fragment>
               ))}
