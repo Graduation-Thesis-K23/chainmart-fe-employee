@@ -144,7 +144,7 @@ const ViewOrder: FC<{
         available: availableProduct?.available || 0,
       };
     });
-  }, []);
+  }, [availableProducts]);
 
   useEffect(() => {
     const ids = order.order_details?.map((item) => item.product.id);
